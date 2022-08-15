@@ -2,23 +2,8 @@
 
 ## Introduction 
 
-Hardened Debian GNU/Linux and CentOS 8 distro auditing.  
-
-The main test environment is in debian GNU/Linux 9/10/11 and CentOS 8, and other versions are not fully tested. There are no implementations of desktop related items in this release.
-
-The code framework is based on the [OVH-debian-cis](https://github.com/ovh/debian-cis) project, Modified some of the original implementations according to the features of Debian 9/10/11 and CentOS 8, added and implemented check items for [STIG Red_Hat_Enterprise_Linux_7_V2R5](https://github.com/hardenedlinux/STIG-OS-mirror/blob/master/redhat-STIG-DOCs/U_Red_Hat_Enterprise_Linux_7_V2R5_STIG.zip) [STIG Ubuntu V1R2](https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_Canonical_Ubuntu_16-04_LTS_V1R2_STIG.zip) and [cisecurity.org](https://www.cisecurity.org/) recommendations, and also added and implemented some check items by the HardenedLinux community. The audit and apply functions of the infrastructure are implemented, and the automatic fix function is implemented for the items that can be automatically fixed. 
-
-
 ```console
 # bash bin/hardening.sh --audit-all
-[...]
-hardening                 [INFO] Treating /home/test/harbian-audit/bin/hardening/13.15_check_duplicate_gid.sh
-13.15_check_duplicate_gid [INFO] Working on 13.15_check_duplicate_gid
-13.15_check_duplicate_gid [INFO] Checking Configuration
-13.15_check_duplicate_gid [INFO] Performing audit
-13.15_check_duplicate_gid [ OK ] No duplicate GIDs
-13.15_check_duplicate_gid [ OK ] Check Passed
-
 [...]
 ################### SUMMARY ###################
       Total Available Checks : 272
@@ -31,19 +16,11 @@ hardening                 [INFO] Treating /home/test/harbian-audit/bin/hardening
 ## Quickstart
 
 ```console
-$ git clone https://github.com/hardenedlinux/harbian-audit.git && cd harbian-audit
+$ git clone https://github.com/sielnet/harbian-audit.git && cd harbian-audit
 # cp etc/default.cfg /etc/default/cis-hardening
 # sed -i "s#CIS_ROOT_DIR=.*#CIS_ROOT_DIR='$(pwd)'#" /etc/default/cis-hardening
 # bin/hardening.sh --init
 # bin/hardening.sh --audit-all
-hardening                 [INFO] Treating /home/test/harbian-audit/bin/hardening/1.1_install_updates.sh
-1.1_install_updates       [INFO] Working on 1.1_install_updates
-1.1_install_updates       [INFO] Checking Configuration
-1.1_install_updates       [INFO] Performing audit
-1.1_install_updates       [INFO] Checking if apt needs an update
-1.1_install_updates       [INFO] Fetching upgrades ...
-1.1_install_updates       [ OK ] No upgrades available
-1.1_install_updates       [ OK ] Check Passed
 [...]
 ################### SUMMARY ###################
       Total Available Checks : 272
@@ -54,16 +31,6 @@ hardening                 [INFO] Treating /home/test/harbian-audit/bin/hardening
        Conformity Percentage : 88.24 %
 # bin/hardening.sh --set-hardening-level 5
 # bin/hardening.sh --apply 
-hardening                 [INFO] Treating /home/test/harbian-audit/bin/hardening/1.1_install_updates.sh
-1.1_install_updates       [INFO] Working on 1.1_install_updates
-1.1_install_updates       [INFO] Checking Configuration
-1.1_install_updates       [INFO] Performing audit
-1.1_install_updates       [INFO] Checking if apt needs an update
-1.1_install_updates       [INFO] Fetching upgrades ...
-1.1_install_updates       [ OK ] No upgrades available
-1.1_install_updates       [INFO] Applying Hardening
-1.1_install_updates       [ OK ] No Upgrades to apply
-1.1_install_updates       [ OK ] Check Passed
 [...]
 ```
 
@@ -73,12 +40,12 @@ hardening                 [INFO] Treating /home/test/harbian-audit/bin/hardening
 
 If use Network install from a minimal CD to installed Debian GNU/Linux, need install packages before use the hardening tool. 
 ```
-# apt-get install -y bc net-tools pciutils network-manager 
+# apt-get install -y bc net-tools pciutils
 ```
 
 Redhat/CentOS need install packages before use the hardening tool:
 ```
-# yum install -y bc net-tools pciutils NetworkManager epel-release 
+# yum install -y bc net-tools pciutils epel-release 
 ```
 
 ### Pre-Set 
