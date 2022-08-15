@@ -170,27 +170,8 @@ $ sed -i 's/^define int_if = ens33/define int_if = eth0/g' etc.nftables.conf
 # bin/hardening.sh --final
 ```
 
-## Special Note 
-Some check items check a variety of situations and are interdependent, they must be applied (fix) multiple times, and the OS must be a reboot after each applies (fix). 
-
-### Items that must be applied after the first application(reboot after is better)
-8.1.35  Because this item is set, the audit rules will not be added. 
-
-### Items that must be applied after all application is ok
-8.4.1   
-8.4.2   
-These are all related to the aide. It is best to fix all the items after they have been fixed to fix the integrity of the database in the system. 
-
-### Items that need to be fix twice  
-4.5  
 
 ## Hacking
-
-**Getting the source**
-
-```console
-$ git clone https://github.com/hardenedlinux/harbian-audit.git
-```
 
 **Adding a custom hardening script**
 
@@ -207,91 +188,3 @@ $ sed -i "s/status=.+/status=enabled/" etc/conf.d/99.99_custom_script.cfg
 $ bash bin/hardening.sh --audit --only 99.99
 $ bash bin/hardening.sh --apply --only 99.99
 ```
-
-## Document 
-
-### Harbian-audit benchmark for Debian GNU/Linux 9 
-This document is a description of the additions to the sections not included in the [CIS reference documentation](https://benchmarks.cisecurity.org/downloads/show-single/index.cfm?file=debian8.100). Includes STIG reference documentation and additional checks recommended by the HardenedLinux community. 
-
-[CIS Debian GNU/Linux 8 Benchmark v1.0.0](https://benchmarks.cisecurity.org/downloads/show-single/index.cfm?file=debian8.100)  
-[CIS Debian GNU/Linux 9 Benchmark v1.0.0](https://benchmarks.cisecurity.org/downloads/show-single/index.cfm?file=debian8.100)  
-[harbian audit Debian Linux 9 Benchmark](https://github.com/hardenedlinux/harbian-audit/blob/master/docs/harbian_audit_Debian_9_Benchmark_v0.1.mkd)  
-
-### Manual Operation docs 
-[How to config grub2 password protection](https://github.com/hardenedlinux/harbian-audit/blob/master/docs/configurations/manual-operation-docs/how_to_config_grub2_password_protection.mkd)  
-[How to persistent iptables rules with debian 9](https://github.com/hardenedlinux/harbian-audit/blob/master/docs/configurations/manual-operation-docs/how_to_persistent_iptables_rules_with_debian_9.mkd)  
-[How to deploy audisp-remote for auditd log](https://github.com/hardenedlinux/harbian-audit/blob/master/docs/configurations/manual-operation-docs/how_to_deploy_audisp_remote_for_audit_log.mkd)  
-[How to migrating from iptables to nftables in debian10](https://github.com/hardenedlinux/harbian-audit/blob/master/docs/configurations/manual-operation-docs/how_to_migrating_from_iptables_to_nftables_in_debian10.md)  
-[How to persistent nft rules with debian 10](https://github.com/hardenedlinux/harbian-audit/blob/master/docs/configurations/manual-operation-docs/how_to_persistent_nft_rules_with_debian_10.mkd)  
-[How to fix SELinux access denied](https://github.com/hardenedlinux/harbian-audit/blob/master/docs/configurations/manual-operation-docs/how_to_fix_SELinux_access_denied.mkd)
-
-### Use case docs  
-[Nodejs + redis + mysql demo](https://github.com/hardenedlinux/harbian-audit/blob/master/docs/use-cases/nodejs-redis-mysql-usecase/README.md)  
-[deploy-hyperledger-cello-on-debian-9](https://github.com/hardenedlinux/harbian-audit/blob/master/docs/use-cases/hyperledger-cello-usecase/README.mkd)  
-[nginx-mutual-ssl-proxy-http](https://github.com/hardenedlinux/harbian-audit/blob/master/docs/use-cases/tls-transmission-usecase/nginx-mutual-ssl-proxy-http-service/Readme.mkd)  
-[nginx-mutual-ssl-proxy-tcp-udp](https://github.com/hardenedlinux/harbian-audit/blob/master/docs/use-cases/tls-transmission-usecase/using-Nginx-as-SSL-tunnel-4TCP-UDP-service/Readme.mkd)   
-
-## harbian-audit complianced image 
-
-### AMI(Amazon Machine Image) Public
-The HardenedLinux community has created public AMI images for three different regions.
-
-Destination region: US East(Ohio)   
-AMI ID: ami-091d37e9d358aaa84   
-AMI Name: harbian-audit complianced for Debian GNU/Linux 9   
-
-Destination region: EU(Frankfurt)  
-AMI ID: ami-073725a8c2cf45418  
-AMI Name: harbian-audit complianced for Debian GNU/Linux 9   
-
-Destination region: Asia Pacific(Tokyo)  
-AMI ID: ami-06c0adb6ee5e7d417   
-AMI Name: harbian-audit complianced for Debian GNU/Linux 9   
-
-#### Docs  
-[how to creating and making an AMI public](https://github.com/hardenedlinux/harbian-audit/blob/master/docs/complianced_image/AMI/how_to_creating_and_making_an_AMI_public.mkd)  
-[how to use harbian-audit complianced for GNU/Linux Debian 9](https://github.com/hardenedlinux/harbian-audit/blob/master/docs/complianced_image/AMI/how_to_use_harbian_audit_complianced_Debian_9.mkd)  
-
-### QEMU Image    
-
-#### Docs   
-[How to creating and making a QEMU image of harbian-audit complianced Debian GNU/Linux 9](https://github.com/hardenedlinux/harbian-audit/blob/master/docs/complianced_image/QEMU/how_to_creating_and_making_a_QEMU_img.mkd)  
-[How to use QEMU image of harbian-audit complicanced Debian GNU/Linux 9](https://github.com/hardenedlinux/harbian-audit/blob/master/docs/complianced_image/QEMU/how_to_use_QEMU_image_of_harbian_audit_complianced_Debian_9.mkd)   
-
-## harbian-audit License   
-GPL 3.0 
-
-## OVH Disclaimer
-
-This project is a set of tools. They are meant to help the system administrator
-built a secure environment. While we use it at OVH to harden our PCI-DSS compliant
-infrastructure, we can not guarantee that it will work for you. It will not
-magically secure any random host.
-
-Additionally, quoting the License:
-
-> THIS SOFTWARE IS PROVIDED BY OVH SAS AND CONTRIBUTORS ``AS IS'' AND ANY
-> EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-> WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-> DISCLAIMED. IN NO EVENT SHALL OVH SAS AND CONTRIBUTORS BE LIABLE FOR ANY
-> DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-> (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-> LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-> ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-> (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-> SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-## OVH License
-
-3-Clause BSD
-
-
-## Reference
-
-- **Center for Internet Security**: [https://www.cisecurity.org](https://www.cisecurity.org)
-- **STIG V1R4**: [https://iasecontent.disa.mil/stigs/zip/U_Red_Hat_Enterprise_Linux_7_V1R4_STIG.zip](https://iasecontent.disa.mil/stigs/zip/U_Red_Hat_Enterprise_Linux_7_V1R4_STIG.zip) 
-- **Firewall Rules**: [https://github.com/citypw/arsenal-4-sec-testing/blob/master/bt5_firewall/debian_fw](https://github.com/citypw/arsenal-4-sec-testing/blob/master/bt5_firewall/debian_fw)
-
-
-
-
