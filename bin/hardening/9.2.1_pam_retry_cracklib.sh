@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# harbian-audit for Debian GNU/Linux 7/8/9/10 or CentOS Hardening
+# harbian-audit for Debian GNU/Linux 7/8/9/10/11/12 or CentOS Hardening
 #
 
 #
@@ -25,6 +25,11 @@ PAMLIBNAME_CENTOS='pam_pwquality.so'
 PATTERN_CENTOS='^password.*pam_pwquality.so'
 FILE_CENTOS='/etc/pam.d/system-auth'
 
+# debian11/debian12 default use pam_pwquality
+PACKAGE_DEBIAN11='libpam-pwquality'
+PAMLIBNAME_DEBIAN11='pam_pwquality.so'
+PATTERN_DEBIAN11='^password.*pam_pwquality.so'
+
 OPTIONNAME='retry'
 
 # condition 
@@ -32,12 +37,6 @@ CONDT_VAL=3
 
 # This function will be called if the script status is on enabled / audit mode
 audit () {
-	if [ $OS_RELEASE -eq 2 ]; then
-		PACKAGE=$PACKAGE_CENTOS
-		PAMLIBNAME=$PAMLIBNAME_CENTOS
-		PATTERN=$PATTERN_CENTOS
-		FILE=$FILE_CENTOS
-	fi
     is_pkg_installed $PACKAGE
     if [ $FNRET != 0 ]; then
         crit "$PACKAGE is not installed!"
@@ -63,12 +62,6 @@ audit () {
 
 # This function will be called if the script status is on enabled mode
 apply () {
-	if [ $OS_RELEASE -eq 2 ]; then
-		PACKAGE=$PACKAGE_CENTOS
-		PAMLIBNAME=$PAMLIBNAME_CENTOS
-		PATTERN=$PATTERN_CENTOS
-		FILE=$FILE_CENTOS
-	fi
     if [ $FNRET = 0 ]; then
         ok "$PACKAGE is installed"
     elif [ $FNRET = 1 ]; then
@@ -94,7 +87,17 @@ apply () {
 
 # This function will check config parameters required
 check_config() {
-    :
+	if [ $OS_RELEASE -eq 2 ]; then
+		PACKAGE=$PACKAGE_CENTOS
+		PAMLIBNAME=$PAMLIBNAME_CENTOS
+		PATTERN=$PATTERN_CENTOS
+		FILE=$FILE_CENTOS
+	fi
+	if [ $OS_RELEASE -eq 11 -o $OS_RELEASE -eq 12 ]; then
+		PACKAGE=$PACKAGE_DEBIAN11
+		PAMLIBNAME=$PAMLIBNAME_DEBIAN11
+		PATTERN=$PATTERN_DEBIAN11
+	fi
 }
 
 # Source Root Dir Parameter

@@ -1,43 +1,54 @@
 #!/bin/bash
 
 #
-# harbian-audit for Debian GNU/Linux 7/8/9  Hardening
+# harbian-audit for Debian GNU/Linux 9/10/11/12
 #
 
 #
-# 8.3.5 Accept Remote rsyslog Messages Only on Designated Log Hosts (Not Scored)
+# 8.7.1 Ensure journald is configured to compress large log files (Scored)
+# Author : Samson wen, Samson <samson@hardenedlinux.org>
 #
 
 set -e # One error, it's over
 set -u # One variable unset, it's over
 
 HARDENING_LEVEL=3
-PACKAGE_R='rsyslog'
+
+CONFFILE='/etc/systemd/journald.conf'
+OPTION='Compress'
+OPTION_VAL='yes'
 
 # This function will be called if the script status is on enabled / audit mode
 audit () {
-    is_pkg_installed $PACKAGE_R
+	check_param_pair_by_str $CONFFILE $OPTION $OPTION_VAL 
 	if [ $FNRET = 0 ]; then
-		ok "$PACKAGE_R has installed, so pass."
-		FNRET=0
-	else
-    	info "Not implemented yet"
+		ok "$OPTION set is $OPTION_VAL in $CONFFILE."
+	elif [ $FNRET = 1 ]; then
+		crit "$CONFFILE is not found!"
+	elif [ $FNRET = 2 ]; then
+		crit "$OPTION set is not $OPTION_VAL in $CONFFILE!"
+	elif [ $FNRET = 3 ]; then
+		crit  "$OPTION is not present in $CONFFILE!"
 	fi
 }
 
-# This function will be called if the script status is on enabled mode
 apply () {
-    is_pkg_installed $PACKAGE_R
 	if [ $FNRET = 0 ]; then
-		ok "$PACKAGE_R has installed, so pass."
-	else
-    	info "Not implemented yet"
+		ok "$OPTION set is $OPTION_VAL in $CONFFILE."
+	elif [ $FNRET = 1 ]; then
+		crit "$CONFFILE is not found, please check!"
+	elif [ $FNRET = 2 ]; then
+		warn "$OPTION set is not $OPTION_VAL in $CONFFILE, reset to $OPTION_VAL"
+		reset_option_str_to_journald $CONFFILE $OPTION $OPTION_VAL
+	elif [ $FNRET = 3 ]; then
+		warn  "$OPTION is not present in $CONFFILE, add to $CONFFILE"
+		add_end_of_file $CONFFILE "${OPTION}=${OPTION_VAL}"
 	fi
 }
 
 # This function will check config parameters required
 check_config() {
-    :
+	:
 }
 
 # Source Root Dir Parameter

@@ -20,6 +20,56 @@ is_centos_8()
 	fi
 }
 
+# return 9 if it is debian9, return 10 if it is debian10, reutrn 11 if it is debian11, return 12 if it is debian12, return 1 if it is less than 9
+get_debian_ver()
+{
+	DEBIAN12CODENAME="bookworm"
+	DEBIAN11CODENAME="bullseye"
+	DEBIAN10CODENAME="buster"
+	DEBIAN9CODENAME="stretch"
+	if [ -r /etc/debian_version ]; then
+		if [ $(grep -cwi "^$DEBIAN12CODENAME" /etc/debian_version) -eq 1 -o  $(cat /etc/debian_version | awk -F"." '{print $1}') -eq 12 ]; then
+			debug "Debian version is 12"
+			FNRET=12
+		elif [ $(grep -cwi "^$DEBIAN11CODENAME" /etc/debian_version) -eq 1 -o  $(cat /etc/debian_version | awk -F"." '{print $1}') -eq 11 ]; then
+			debug "Debian version is 11"
+			FNRET=11
+		elif [ $(grep -cwi "^$DEBIAN10CODENAME" /etc/debian_version) -eq 1 -o  $(cat /etc/debian_version | awk -F"." '{print $1}') -eq 10 ]; then
+			debug "Debian version is 10"
+			FNRET=10
+		elif [ $(grep -cwi "^$DEBIAN9CODENAME" /etc/debian_version) -eq 1 -o  $(cat /etc/debian_version | awk -F"." '{print $1}') -eq 9 ]; then
+			debug "Debian version is 9"
+			FNRET=9
+		else
+			debug "Debian version is less than 9"
+			FNRET=1
+		fi
+	fi
+}
+
+is_debian_12()
+{
+	# For debian12
+	DEBIAN12CODENAME="bookworm"
+	if [ -r /etc/debian_version ]; then
+		if [ $(grep -cw "^$DEBIAN12CODENAME" /etc/debian_version) -eq 1 ]; then
+			debug "Debian version is 12"
+			FNRET=0
+			return 
+		fi
+		if [ $(cat /etc/debian_version | awk -F"." '{print $1}') -eq 12 ]; then
+			debug "Debian version is 12"
+			FNRET=0
+		else
+			debug "Current OS is not Debian 12."
+			FNRET=2
+		fi
+	else
+		debug "Current OS is not Debian."
+		FNRET=2
+	fi
+}
+
 is_debian_ge_10()
 {
 	# For debian11 
@@ -730,6 +780,54 @@ verify_integrity_all_packages()
 	fi
 }
 
+# Check paramer with str
+# example: Storage=persistent
+# return: 0 1 2 3 
+check_param_pair_by_str ()
+{
+	FILENAME=$1
+	OPTION=$2
+	EXPECT_OPSTR=$3
+
+    #Example:
+    # FILENAME="/etc/systemd/journald.conf"
+    # OPTION="Storage"
+	# EXPECT_OPSTR="persistent"
+
+	if [ ! -f $FILENAME ]; then
+		debug "$FILENAME file is not exist!"
+		FNRET=1
+	else
+		if [ $(sed -e '/^#/d' -e '/^[ \t][ \t]*#/d' -e 's/#.*$//' -e '/^$/d' $FILENAME | grep "$OPTION=" | wc -l) -gt 0 ]; then
+			debug "$OPTION is exist in $FILENAME."
+			OP_STR=$(sed -e '/^#/d' -e '/^[ \t][ \t]*#/d' -e 's/#.*$//' -e '/^$/d' $FILENAME | grep $OPTION | awk -F'=' '{print $2}')
+			if [ $OP_STR == $EXPECT_OPSTR ]; then
+				debug "The str value is eq to expect str."
+				FNRET=0
+			else
+				debug "The str value is not eq to expect str."
+				FNRET=2
+			fi
+		else
+			debug "The options $OPTION is not exist in $FILENAME"
+			FNRET=3
+		fi
+	fi
+}
+
+reset_option_str_to_journald ()
+{
+	FILENAME=$1
+	OPTION=$2
+	SET_OPSTR=$3
+
+    #Example:
+    # FILENAME="/etc/systemd/journald.conf"
+    # OPTION="Storage"
+	# SET_OPSTR="persistent"
+    sed -i "s/${OPTION}=.*/${OPTION}=${SET_OPSTR}/" $FILENAME
+}
+
 # Check paramer with value 
 # example : minlen = 9
 # ruturn: 0  1  2  3 
@@ -1314,7 +1412,7 @@ check_sshd_conf_for_one_value_runtime ()
 check_blacklist_module_set ()
 {
 	MODPROBE_CONF_FILE_PATTERN="/etc/modprobe.d/*"
-	COUNT=$(grep -w $1 -r $MODPROBE_CONF_FILE_PATTERN | grep "^blacklist" | wc -l)
+	COUNT=$(grep -hw $1 -r $MODPROBE_CONF_FILE_PATTERN | sed -e 's/^[ ]*//g' |grep "^blacklist" | wc -l)
 	if [ $COUNT -ge 1 ]; then
 		debug "$1 has set in $MODPROBE_CONF_FILE_PATTERN"
 		FNRET=0
