@@ -12,7 +12,7 @@
 set -e # One error, it's over
 set -u # One variable unset, it's over
 
-HARDENING_LEVEL=2
+HARDENING_LEVEL=3
 
 TARGETNAME='ctrl-alt-del.target'
 
