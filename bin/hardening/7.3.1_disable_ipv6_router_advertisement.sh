@@ -11,7 +11,7 @@
 set -e # One error, it's over
 set -u # One variable unset, it's over
 
-HARDENING_LEVEL=2
+HARDENING_LEVEL=3
 
 SYSCTL_PARAMS='net.ipv6.conf.all.accept_ra=0 net.ipv6.conf.default.accept_ra=0'
 
